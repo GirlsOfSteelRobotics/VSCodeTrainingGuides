@@ -14,7 +14,6 @@ public class DriveStop extends Command {
     public DriveStop() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	requires(Robot.driveTrain);
     }
 
     // Called just before this Command runs the first time
@@ -23,7 +22,6 @@ public class DriveStop extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.driveTrain.stop();
     }
 
     // Make this return true when this Command no longer needs to run execute()
