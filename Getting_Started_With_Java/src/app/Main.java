@@ -2,7 +2,7 @@ package app;
 
 import java.util.Arrays;
 
-public class App {
+public class Main {
     public static void main(String[] args) throws Exception {
         // write your own code here
         // these are comments

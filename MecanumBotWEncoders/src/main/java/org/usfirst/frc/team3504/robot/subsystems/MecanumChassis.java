@@ -8,16 +8,22 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-/**
- *
- */
 public class MecanumChassis extends Subsystem {
+	private CANSparkMax rightFront;
+	private CANSparkMax rightBack;
+	private CANSparkMax leftFront;
+	private CANSparkMax leftBack;
 
+
+	/*
 	private final WPI_TalonSRX rightFront = RobotMap.mecanumChassisTalonSRX3;
     private final WPI_TalonSRX rightBack = RobotMap.mecanumChassisTalonSRX4;
     private final WPI_TalonSRX leftFront = RobotMap.mecanumChassisTalonSRX1;
     private final WPI_TalonSRX leftBack = RobotMap.mecanumChassisTalonSRX2;
+	*/
 
     private MecanumDrive m_drive;
     

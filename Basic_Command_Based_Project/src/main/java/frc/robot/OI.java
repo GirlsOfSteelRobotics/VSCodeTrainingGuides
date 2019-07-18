@@ -22,13 +22,5 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-	Joystick joystickName = new Joystick(RobotMap.JOYSTICK_PORT);
-	
-	Button button1 = new JoystickButton(joystickName,1);
-	Button button2 = new JoystickButton(joystickName, 2);
-	
-		public OI() {
-			button1.whenPressed(new DriveForward());
-			button2.whenPressed(new DriveStop());
-		}
+
 }
