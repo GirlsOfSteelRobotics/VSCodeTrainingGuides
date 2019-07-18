@@ -27,7 +27,6 @@ import frc.robot.subsystems.DriveTrain;
  */
 public class Robot extends TimedRobot {
 	public static OI oi;
-	public static DriveTrain driveTrain;
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
@@ -38,7 +37,6 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
-		driveTrain = new DriveTrain();
 		oi = new OI();
 //		chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
