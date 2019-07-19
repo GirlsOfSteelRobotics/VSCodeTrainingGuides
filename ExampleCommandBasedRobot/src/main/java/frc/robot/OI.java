@@ -7,8 +7,12 @@
 
 package frc.robot;
 
+import javax.print.attribute.standard.JobHoldUntil;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.robot.commands.DriveByDistance;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -17,8 +21,13 @@ import edu.wpi.first.wpilibj.buttons.Button;
 public class OI {
   Joystick drivingStick;
   
+  JoystickButton autoTest; 
+
   public OI(){
     drivingStick = new Joystick(0);
+
+    autoTest = new JoystickButton(drivingStick, 1);
+    autoTest.whenPressed(new DriveByDistance(20));
   }
 
   public double getDrivingStickY(){
