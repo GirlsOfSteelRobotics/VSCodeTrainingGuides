@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -36,9 +37,10 @@ public class Drivetrain extends Subsystem {
   private DifferentialDrive drive;
 
   public CANEncoder leftEnc;
-  private CANEncoder rightEnc;
+  public CANEncoder rightEnc;
 
-  public CANPIDController pidCont;
+  public CANPIDController lpidCont;
+  public CANPIDController rpidCont;
 
   public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
   
@@ -49,18 +51,24 @@ public class Drivetrain extends Subsystem {
     masterRight = new CANSparkMax(RobotMap.DRIVE_RIGHT_MASTER_PORT, MotorType.kBrushless);
     followerRight = new CANSparkMax(RobotMap.DRIVE_RIGHT_FOLLOWER_PORT, MotorType.kBrushless);
 
+    masterLeft.setIdleMode(IdleMode.kCoast);
+    followerLeft.setIdleMode(IdleMode.kCoast);
+    masterRight.setIdleMode(IdleMode.kCoast);
+    followerRight.setIdleMode(IdleMode.kCoast);
+
     followerLeft.follow(masterLeft);
     followerRight.follow(masterRight);
 
     drive = new DifferentialDrive(masterLeft, masterRight);
     drive.setSafetyEnabled(true);
     drive.setExpiration(0.1);
-    drive.setMaxOutput(1.0);
+    drive.setMaxOutput(0.5);
 
     leftEnc = masterLeft.getEncoder();
     rightEnc = masterRight.getEncoder();
 
-    pidCont = masterLeft.getPIDController();
+    lpidCont = masterLeft.getPIDController();
+    rpidCont = masterRight.getPIDController();
 
     // PID Coefficients (copied directly from spark example code)
     kP = 0.1;
@@ -71,12 +79,19 @@ public class Drivetrain extends Subsystem {
     kMaxOutput = 1;
     kMinOutput = -1;
 
-    pidCont.setP(kP);
-    pidCont.setI(kI);
-    pidCont.setD(kD);
-    pidCont.setIZone(kIz);
-    pidCont.setFF(kFF);
-    pidCont.setOutputRange(kMinOutput, kMaxOutput);
+    lpidCont.setP(kP);
+    lpidCont.setI(kI);
+    lpidCont.setD(kD);
+    lpidCont.setIZone(kIz);
+    lpidCont.setFF(kFF);
+    lpidCont.setOutputRange(kMinOutput, kMaxOutput);
+
+    rpidCont.setP(kP);
+    rpidCont.setI(kI);
+    rpidCont.setD(kD);
+    rpidCont.setIZone(kIz);
+    rpidCont.setFF(kFF);
+    rpidCont.setOutputRange(kMinOutput, kMaxOutput);
   }
 
   
@@ -105,6 +120,12 @@ public class Drivetrain extends Subsystem {
     drive.arcadeDrive(yDir, xDir);
   }
 
+  public void driveByEnc(double encRev){
+    lpidCont.setReference(encRev, ControlType.kPosition);
+    rpidCont.setReference(-encRev, ControlType.kPosition);
+  }
+
+
   public CANSparkMax getLeftSpark(){
     return masterLeft;
   }
@@ -113,7 +134,7 @@ public class Drivetrain extends Subsystem {
     return masterRight; 
   }
 
-  @Override
+  // @Override
   public void initDefaultCommand() {
     setDefaultCommand(new DriveByJoystick());
   }
