@@ -41,8 +41,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
-        RobotMap.init();
-
         chassis = new Chassis();
 
         // OI must be constructed after subsystems. If the OI creates Commands
