@@ -11,7 +11,7 @@
 
 package org.usfirst.frc3504.SampleChassisBot.subsystems;
 
-import org.usfirst.frc3504.SampleChassisBot.Robot;
+import org.usfirst.frc3504.SampleChassisBot.SpeedModeTalonSRX;
 import org.usfirst.frc3504.SampleChassisBot.RobotMap;
 import org.usfirst.frc3504.SampleChassisBot.commands.*;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -19,40 +19,31 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
+import com.revrobotics.CANSparkMax.IdleMode;
 
 public class Chassis extends Subsystem {
 	//probably should come up with better names
-    private final WPI_TalonSRX talonSRX1 = RobotMap.chassisTalonSRX1;
-    private final WPI_TalonSRX talonSRX2 = RobotMap.chassisTalonSRX2;
-    private final WPI_TalonSRX talonSRX3 = RobotMap.chassisTalonSRX3;
-    private final WPI_TalonSRX talonSRX4 = RobotMap.chassisTalonSRX4;
-    private final WPI_TalonSRX talonSRX5 = RobotMap.chassisTalonSRX5;
-    private final WPI_TalonSRX talonSRX6 = RobotMap.chassisTalonSRX6;
+    private final SpeedModeTalonSRX talonLeftMaster = new SpeedModeTalonSRX(RobotMap.DRIVE_LEFT_MASTER_TALON, 5000);
+    private final SpeedModeTalonSRX talonLeftA = new SpeedModeTalonSRX(RobotMap.DRIVE_LEFT_FOLLOWER_TALON_A, 5000);
+   // private final SpeedModeTalonSRX talonLeftB = new SpeedModeTalonSRX(RobotMap.DRIVE_LEFT_FOLLOWER_TALON_B, 5000);
+    private final SpeedModeTalonSRX talonRightMaster = new SpeedModeTalonSRX(RobotMap.DRIVE_RIGHT_MASTER_TALON, 5000);
+    private final SpeedModeTalonSRX talonRightA = new SpeedModeTalonSRX(RobotMap.DRIVE_RIGHT_FOLLOWER_TALON_A, 5000);
+   // private final SpeedModeTalonSRX talonRightB = new SpeedModeTalonSRX(RobotMap.DRIVE_RIGHT_FOLLOWER_TALON_B, 5000);
     
     private DifferentialDrive drive;
-
 
     public Chassis() {
     	//This is the constructor
     	
     	//Safety and brakes ----------------------------------
-    	talonSRX1.setNeutralMode(NeutralMode.Brake);
-    	talonSRX2.setNeutralMode(NeutralMode.Brake);
-    	talonSRX3.setNeutralMode(NeutralMode.Brake);
+    	talonLeftMaster.setIdleMode(IdleMode.kBrake);
+    	talonLeftA.setIdleMode(IdleMode.kBrake);
+    	//talonLeftB.setIdleMode(IdleMode.kBrake);
     	
-    	talonSRX4.setNeutralMode(NeutralMode.Brake);
-    	talonSRX5.setNeutralMode(NeutralMode.Brake);
-    	talonSRX6.setNeutralMode(NeutralMode.Brake);
+    	talonRightMaster.setIdleMode(IdleMode.kBrake);
+    	talonRightA.setIdleMode(IdleMode.kBrake);
+    	//talonRightB.setIdleMode(IdleMode.kBrake);
     	
-    	talonSRX1.setSafetyEnabled(false);
-    	talonSRX2.setSafetyEnabled(false);
-    	talonSRX3.setSafetyEnabled(false);
-    	
-    	talonSRX4.setSafetyEnabled(false);
-    	talonSRX5.setSafetyEnabled(false);
-    	talonSRX6.setSafetyEnabled(false);
     	//-----------------------------------------------------
     	
     	//reverse();
@@ -60,8 +51,9 @@ public class Chassis extends Subsystem {
     	setFollowerMode();
     	
     	//invert(true); //uncomment if needed
-    	//if needed to invert the talons, do before putting into the drive
-    	drive = new DifferentialDrive(talonSRX4, talonSRX1);
+		//if needed to invert the talons, do before putting into the drive
+		
+    	drive = new DifferentialDrive(talonRightMaster, talonLeftMaster);
     	
     	drive.setSafetyEnabled(false);
     	//this line is to set it so the joystick isn't too sensitive to input
@@ -70,7 +62,7 @@ public class Chassis extends Subsystem {
 
     @Override
     public void initDefaultCommand() {
-        setDefaultCommand(new DriveByTank());
+        setDefaultCommand(new DriveByArcade());
 
         // Set the default command for a subsystem here.
         // setDefaultCommand(new MySpecialCommand());
@@ -93,33 +85,33 @@ public class Chassis extends Subsystem {
     
     public void invert(boolean x) {
     	//if the moters are spinning in opposite directions
-    	talonSRX1.setInverted(false);
-    	talonSRX2.setInverted(false);
-    	talonSRX3.setInverted(false);
+    	talonLeftMaster.setInverted(false);
+    	talonLeftA.setInverted(false);
+    	//talonLeftB.setInverted(false);
     	
-    	talonSRX4.setInverted(x);
-    	talonSRX5.setInverted(x);
-    	talonSRX6.setInverted(x);
+    	talonRightMaster.setInverted(x);
+    	talonRightA.setInverted(x);
+    	//talonRightB.setInverted(x);
     }
     
     public void reverse() {
     	//if the motors are together but completely reversed (do not pair with invert)
-    	talonSRX1.setInverted(true);
-    	talonSRX3.setInverted(true);
-    	talonSRX5.setInverted(true);
+    	talonLeftMaster.setInverted(true);
+    	//talonLeftB.setInverted(true);
+    	talonRightA.setInverted(true);
     	
-    	talonSRX2.setInverted(true);
-    	talonSRX4.setInverted(true);
-    	talonSRX6.setInverted(true);
+    	talonLeftA.setInverted(true);
+    	talonRightMaster.setInverted(true);
+    	//talonRightB.setInverted(true);
     }
     
     public void setFollowerMode() {
     	//follower code
-    	talonSRX2.follow(talonSRX1, FollowerType.PercentOutput);
-    	talonSRX3.follow(talonSRX1, FollowerType.PercentOutput);
+    	talonLeftA.follow(talonLeftMaster);
+    	//talonLeftB.follow(talonLeftMaster);
     	
-    	talonSRX5.follow(talonSRX4, FollowerType.PercentOutput);
-    	talonSRX6.follow(talonSRX4, FollowerType.PercentOutput);
+    	talonRightA.follow(talonRightMaster);
+    	//talonRightB.follow(talonRightMaster);
     }
     
     public void stop() {
