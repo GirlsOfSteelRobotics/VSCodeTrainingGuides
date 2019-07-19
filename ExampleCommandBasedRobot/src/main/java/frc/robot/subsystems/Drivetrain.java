@@ -18,6 +18,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.RobotMap;
 // import frc.robot.commands.DriveByJoystick;
+import frc.robot.commands.DriveByJoystick;
 
 /**
  * An example subsystem.  You can replace me with your own Subsystem.
@@ -34,11 +35,12 @@ public class Drivetrain extends Subsystem {
 
   private DifferentialDrive drive;
 
-  private CANEncoder leftEnc;
+  public CANEncoder leftEnc;
   private CANEncoder rightEnc;
 
-  private CANPIDController leftPID;
-  private CANPIDController rightPID;
+  public CANPIDController pidCont;
+
+  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
   
   public Drivetrain() {
     masterLeft = new CANSparkMax(RobotMap.DRIVE_LEFT_MASTER_PORT, MotorType.kBrushless);
@@ -50,13 +52,34 @@ public class Drivetrain extends Subsystem {
     followerLeft.follow(masterLeft);
     followerRight.follow(masterRight);
 
+    drive = new DifferentialDrive(masterLeft, masterRight);
+    drive.setSafetyEnabled(true);
+    drive.setExpiration(0.1);
+    drive.setMaxOutput(1.0);
+
     leftEnc = masterLeft.getEncoder();
     rightEnc = masterRight.getEncoder();
 
-    leftPID = masterLeft.getPIDController();
-    rightPID = masterRight.getPIDController();
+    pidCont = masterLeft.getPIDController();
 
+    // PID Coefficients (copied directly from spark example code)
+    kP = 0.1;
+    kI = 1e-4;
+    kD = 1;
+    kIz = 0;
+    kFF = 0;
+    kMaxOutput = 1;
+    kMinOutput = -1;
+
+    pidCont.setP(kP);
+    pidCont.setI(kI);
+    pidCont.setD(kD);
+    pidCont.setIZone(kIz);
+    pidCont.setFF(kFF);
+    pidCont.setOutputRange(kMinOutput, kMaxOutput);
   }
+
+  
 
   public void forward() {
     masterLeft.set(0.1);
@@ -78,11 +101,20 @@ public class Drivetrain extends Subsystem {
     return leftEnc.getPositionConversionFactor() * position; 
   }
 
+  public void driveByJoystick(double yDir, double xDir){
+    drive.arcadeDrive(yDir, xDir);
+  }
 
+  public CANSparkMax getLeftSpark(){
+    return masterLeft;
+  }
+
+  public CANSparkMax getRightSpark(){
+    return masterRight; 
+  }
 
   @Override
   public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
+    setDefaultCommand(new DriveByJoystick());
   }
 }
